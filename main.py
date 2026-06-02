@@ -1,7 +1,10 @@
 import requests
 import os
+from openai import OpenAI
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+load_dotenv()
+
+client = OpenAI()
 
 def generate_post(topic):
     prompt = """
@@ -19,21 +22,12 @@ def generate_post(topic):
     </topic>
     """
 
-    payload = {
-        "model": "gpt-4o-mini",
-        "input": user_input,
-    }
-
-    response = requests.post(
-        "https://api.openai.com/v1/responses",
-        json=payload,
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {OPENAI_API_KEY}"
-        }
+    response = client.responses.create(
+        model="gpt-4o-mini",
+        input=prompt,
     )
 
-    return response.json().get("output", [{}])[0].get("content", [{}])[0].get("text", "")
+    return response.output_text
 
 def main():
     user_input = input("What should the post be about? ")
