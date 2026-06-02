@@ -1,13 +1,26 @@
 import requests
-import os
+import json
+from pathlib import Path
+from dotenv import load_dotenv
 from openai import OpenAI
 
 load_dotenv()
 
 client = OpenAI()
+EXAMPLES_PATH = Path(__file__).with_name("post_examples.json")
+
+
+def format_examples(examples):
+    return "\n\n".join(
+        f"<post>\n<title>{item['title']}</title>\n<content>\n{item['content']}\n</content>\n</post>"
+        for item in examples
+    )
 
 def generate_post(topic):
-    prompt = """
+    examples_data = json.loads(EXAMPLES_PATH.read_text(encoding="utf-8"))
+    examples = format_examples(examples_data)
+    
+    prompt = f"""
     You are a helpful assistant that generates posts for a social media platform.
     The user will provide you with a topic, and you will generate a post about it.
     The post should be 100 words long.
@@ -22,12 +35,7 @@ def generate_post(topic):
     </topic>
 
     Here are some examples of posts:
-    <post>
-    <title>How to make a sandwich</title>
-    <content>
-    A sandwich is a simple meal that can be made with a variety of ingredients.
-    </content>
-    </post>
+    {examples}
 
     Please use the tone, language, and style of the examples to generate the post. Don't use the same words or phrases as the examples.
     """
