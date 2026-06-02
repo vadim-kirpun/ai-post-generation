@@ -20,6 +20,16 @@ def generate_post(topic):
     <topic>
     {topic}
     </topic>
+
+    Here are some examples of posts:
+    <post>
+    <title>How to make a sandwich</title>
+    <content>
+    A sandwich is a simple meal that can be made with a variety of ingredients.
+    </content>
+    </post>
+
+    Please use the tone, language, and style of the examples to generate the post. Don't use the same words or phrases as the examples.
     """
 
     response = client.responses.create(
